@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "starter",
+    "python-starter"
+]
