@@ -11,3 +11,7 @@ $ cargo run
 ```
 $ cargo test
 ```
+
+# License
+
+MIT LICENSE
