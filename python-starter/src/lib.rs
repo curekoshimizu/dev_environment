@@ -3,6 +3,13 @@ use std::io;
 use std::path::Path;
 
 pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
+    if !target_dir.exists() {
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("{:?} not found", target_dir),
+        ));
+    }
+
     let dir = fs::read_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("assets"))?;
 
     for path in dir {
