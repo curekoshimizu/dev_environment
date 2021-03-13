@@ -15,7 +15,7 @@ pub fn copy_resource(target_dir: &Path) -> Result<(), io::Error> {
     let new_file = target_dir.join("hoge");
 
     match fs::copy(path, &new_file) {
-        Ok(ret) => Ok( () ),
+        Ok(_) => Ok(()),
         Err(err) => Err(err),
     }
 }
@@ -36,12 +36,10 @@ mod tests {
         assert!(new_file.exists());
     }
 
-
     #[test]
     fn unknown_dir_test() {
         let tmp_path = TempDir::new("").unwrap().into_path().join("unknown_dir");
 
         copy_resource(&tmp_path).unwrap_err();
     }
-
 }
