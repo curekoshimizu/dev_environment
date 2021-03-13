@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 tempdir = "0.3"
+is_executable = "1.0.1"
