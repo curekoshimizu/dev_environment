@@ -3,7 +3,9 @@
 ## How to use
 
 ```
-$ cargo run
+$ cargo run -- -h
+
+$ cargo run -- python --target-dir target_dir_name
 ```
 
 ## How to test
