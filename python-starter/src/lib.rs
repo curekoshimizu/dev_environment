@@ -2,24 +2,18 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
-pub fn add_one(x: i32) -> i32 {
-    return x + 1;
-}
+pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
+    let dir = fs::read_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("assets"))?;
 
-pub fn copy_resource(target_dir: &Path) -> Result<(), io::Error> {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("assets")
-        .join("text_asset.txt");
-    assert!(path.exists());
-
-    let new_file = target_dir.join("hoge");
-
-    match fs::copy(path, &new_file) {
-        Ok(_) => Ok(()),
-        Err(err) => Err(err),
+    for path in dir {
+        let p = path?.path();
+        let file_name = p.file_name().unwrap();
+        let new_file = target_dir.join(file_name);
+        fs::copy(p, &new_file)?;
     }
-}
 
+    Ok(())
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -30,9 +24,9 @@ mod tests {
     fn tempdir_copy_test() {
         let tmp_path = TempDir::new("").unwrap().into_path();
 
-        copy_resource(&tmp_path).unwrap();
+        setup(&tmp_path).unwrap();
 
-        let new_file = tmp_path.join("hoge");
+        let new_file = tmp_path.join("text_asset.txt");
         assert!(new_file.exists());
     }
 
@@ -40,6 +34,6 @@ mod tests {
     fn unknown_dir_test() {
         let tmp_path = TempDir::new("").unwrap().into_path().join("unknown_dir");
 
-        copy_resource(&tmp_path).unwrap_err();
+        setup(&tmp_path).unwrap_err();
     }
 }
