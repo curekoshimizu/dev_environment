@@ -26,8 +26,9 @@ mod tests {
 
         setup(&tmp_path).unwrap();
 
-        let new_file = tmp_path.join("text_asset.txt");
-        assert!(new_file.exists());
+        assert!(tmp_path.join("pyproject.toml").exists());
+        assert!(tmp_path.join("lint.bash").exists());
+        assert!(tmp_path.join("setup.cfg").exists());
     }
 
     #[test]
