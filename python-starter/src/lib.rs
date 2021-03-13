@@ -18,6 +18,7 @@ pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
 mod tests {
     use super::*;
     extern crate tempdir;
+    use is_executable::IsExecutable;
     use tempdir::TempDir;
 
     #[test]
@@ -27,8 +28,11 @@ mod tests {
         setup(&tmp_path).unwrap();
 
         assert!(tmp_path.join("pyproject.toml").exists());
+        assert!(!tmp_path.join("pyproject.toml").is_executable());
         assert!(tmp_path.join("lint.bash").exists());
+        assert!(tmp_path.join("lint.bash").is_executable());
         assert!(tmp_path.join("setup.cfg").exists());
+        assert!(!tmp_path.join("setup.cfg").is_executable());
     }
 
     #[test]

@@ -7,6 +7,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a06f77d526c1a601b7c4cdd98f54b5eaabffc14d5f2f0296febdc7f357c6d3ba"
 
 [[package]]
+name = "is_executable"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa9acdc6d67b75e626ad644734e8bc6df893d9cd2a834129065d3dd6158ea9c8"
+dependencies = [
+ "winapi",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.88"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -16,6 +25,7 @@ checksum = "03b07a082330a35e43f63177cc01689da34fbffa0105e1246cf0311472cac73a"
 name = "python-starter"
 version = "0.1.0"
 dependencies = [
+ "is_executable",
  "tempdir",
 ]
 
