@@ -1,11 +1,18 @@
 use std::fs;
+use std::fs::File;
 use std::io;
+use std::io::Write;
 use std::path::Path;
 
 pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
     if !target_dir.exists() {
         fs::create_dir(&target_dir)?
     }
+
+    assert!(target_dir.is_dir());
+    let project_name = target_dir.file_name().unwrap().to_str().unwrap();
+
+    setup_module_dir(target_dir, project_name)?;
 
     let dir = fs::read_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("assets"))?;
 
@@ -18,6 +25,22 @@ pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
 
     Ok(())
 }
+
+fn setup_module_dir(target_dir: &Path, project_name: &str) -> Result<(), io::Error> {
+    let module_dir = target_dir.join(project_name);
+    fs::create_dir(&module_dir)?;
+
+    let empty_files = ["__init__.py", "py.typed"];
+
+    for file_name in empty_files.iter() {
+        let f = File::create(module_dir.join(file_name))?;
+        let mut f = io::BufWriter::new(f);
+        f.write(b"")?;
+    }
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -47,14 +70,16 @@ mod tests {
     #[test]
     fn not_exist_dir_test() {
         let tmp_path;
-        let tmp = TempDir::new().unwrap();
         {
-            tmp_path = tmp.path().to_path_buf().join("unknown_dir");
+            let tmp = TempDir::new().unwrap();
+            tmp_path = tmp.path().to_path_buf().join("project_name");
             assert!(!tmp_path.exists());
             setup(&tmp_path).unwrap();
 
             assert!(tmp_path.exists());
             assert!(tmp_path.join("pyproject.toml").exists());
+            assert!(tmp_path.join("project_name").join("__init__.py").exists());
+            assert!(tmp_path.join("project_name").join("py.typed").exists());
         }
         assert!(!tmp_path.exists());
     }
