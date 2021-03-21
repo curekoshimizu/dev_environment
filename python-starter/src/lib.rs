@@ -4,10 +4,7 @@ use std::path::Path;
 
 pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
     if !target_dir.exists() {
-        return Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            format!("{:?} not found", target_dir),
-        ));
+        fs::create_dir(&target_dir)?
     }
 
     let dir = fs::read_dir(Path::new(env!("CARGO_MANIFEST_DIR")).join("assets"))?;
@@ -49,8 +46,16 @@ mod tests {
 
     #[test]
     fn unknown_dir_test() {
+        let tmp_path;
         let tmp = TempDir::new().unwrap();
-        let tmp_path = tmp.path().to_path_buf().join("unknown_dir");
-        setup(&tmp_path).unwrap_err();
+        {
+            tmp_path = tmp.path().to_path_buf().join("unknown_dir");
+            assert!(!tmp_path.exists());
+            setup(&tmp_path).unwrap();
+
+            assert!(tmp_path.exists());
+            assert!(tmp_path.join("pyproject.toml").exists());
+        }
+        assert!(!tmp_path.exists());
     }
 }
