@@ -24,28 +24,33 @@ pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    extern crate tempdir;
     use is_executable::IsExecutable;
-    use tempdir::TempDir;
+    use tempfile::TempDir;
 
     #[test]
     fn tempdir_copy_test() {
-        let tmp_path = TempDir::new("").unwrap().into_path();
+        let tmp_path;
+        {
+            let tmp = TempDir::new().unwrap();
+            tmp_path = tmp.path().to_path_buf();
+            assert!(tmp_path.exists());
 
-        setup(&tmp_path).unwrap();
+            setup(&tmp_path).unwrap();
 
-        assert!(tmp_path.join("pyproject.toml").exists());
-        assert!(!tmp_path.join("pyproject.toml").is_executable());
-        assert!(tmp_path.join("lint.bash").exists());
-        assert!(tmp_path.join("lint.bash").is_executable());
-        assert!(tmp_path.join("setup.cfg").exists());
-        assert!(!tmp_path.join("setup.cfg").is_executable());
+            assert!(tmp_path.join("pyproject.toml").exists());
+            assert!(!tmp_path.join("pyproject.toml").is_executable());
+            assert!(tmp_path.join("lint.bash").exists());
+            assert!(tmp_path.join("lint.bash").is_executable());
+            assert!(tmp_path.join("setup.cfg").exists());
+            assert!(!tmp_path.join("setup.cfg").is_executable());
+        }
+        assert!(!tmp_path.exists());
     }
 
     #[test]
     fn unknown_dir_test() {
-        let tmp_path = TempDir::new("").unwrap().into_path().join("unknown_dir");
-
+        let tmp = TempDir::new().unwrap();
+        let tmp_path = tmp.path().to_path_buf().join("unknown_dir");
         setup(&tmp_path).unwrap_err();
     }
 }
