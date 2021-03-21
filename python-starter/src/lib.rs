@@ -45,7 +45,7 @@ mod tests {
     }
 
     #[test]
-    fn unknown_dir_test() {
+    fn not_exist_dir_test() {
         let tmp_path;
         let tmp = TempDir::new().unwrap();
         {
