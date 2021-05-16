@@ -16,6 +16,7 @@ pytest = "^6.2.1"
 ipdb = "^0.13.4"
 pysen = "^0.9.1"
 pysen-plugins = "^2021.5.6"
+pysen-ls = "^0.1.1"
 
 [tool.pysen]
 version = "0.9"
