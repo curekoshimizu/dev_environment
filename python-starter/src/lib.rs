@@ -1,8 +1,11 @@
 use std::fs;
 use std::fs::File;
 use std::io;
+use std::io::BufRead;
+use std::io::BufReader;
 use std::io::Write;
 use std::path::Path;
+use std::path::PathBuf;
 
 pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
     if !target_dir.exists() {
@@ -21,6 +24,26 @@ pub fn setup(target_dir: &Path) -> Result<(), io::Error> {
         let file_name = p.file_name().unwrap();
         let new_file = target_dir.join(file_name);
         fs::copy(p, &new_file)?;
+    }
+
+    let pyproject = target_dir.join("pyproject.toml");
+    let project_name = target_dir.file_name().unwrap().to_str().unwrap();
+    replace_keyword(pyproject, project_name)?;
+
+    Ok(())
+}
+
+fn replace_keyword(target_file: PathBuf, project_name: &str) -> Result<(), io::Error> {
+    let f = BufReader::new(File::open(&target_file)?);
+
+    let mut new_body: Vec<String> = vec![];
+    for line in f.lines() {
+        let line = line?.replace("__PROJECT_NAME__", project_name);
+        new_body.push(line);
+    }
+    let mut f = io::BufWriter::new(File::create(target_file)?);
+    for line in new_body {
+        writeln!(f, "{}", line)?;
     }
 
     Ok(())
